@@ -1,0 +1,6 @@
+ai/preferred/crawler/steamGames/master/ListingValidator.class
+ai/preferred/crawler/steamGames/master/ListingParser.class
+ai/preferred/crawler/EntityCSVStorage.class
+ai/preferred/crawler/steamGames/entity/Game.class
+ai/preferred/crawler/steamGames/master/ListingCrawler.class
+ai/preferred/crawler/steamGames/master/ListingHandler.class
