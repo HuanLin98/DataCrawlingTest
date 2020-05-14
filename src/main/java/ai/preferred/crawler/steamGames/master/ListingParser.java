@@ -17,16 +17,12 @@ public class ListingParser {
         throw new UnsupportedOperationException();
     }
 
-    static List<Game> parseListing(Document document) {
-        // get the genre
-        String title = document.title();
-        String genre = title.substring(9);
-
+    static List<Game> parseListing(Document document, String genre) {
+    
         // split into games to parse
         System.out.println("parsing document " + genre);
-        
-        final Elements tabs = document.select("#tab_content_NewReleases");
-        final Elements games = tabs.select("a");
+        genre = genre.replace("%20", " ");
+        final Elements games = document.select("a");
         final ArrayList<Game> result = new ArrayList<>(games.size());
         for (final Element g : games) {
             System.out.println("parsing game " + genre);
