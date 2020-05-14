@@ -12,12 +12,12 @@ import ai.preferred.venom.validator.StatusOkValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ai.preferred.crawler.steamGames.entity.Game;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.Jsoup;
-import org.jsoup.select.Elements;
 import java.io.IOException;
-
+import java.util.ArrayList;
+import java.util.*;
+// import org.apache.http.client.utils.URIBuilder;
+// import org.jsoup.Jsoup;
+// import org.jsoup.nodes.Document;
 
 public class ListingCrawler {
     // Create session keys for CSV printer to print from handler
@@ -33,27 +33,21 @@ public class ListingCrawler {
         // Start CSV printer
         try (EntityCSVStorage<Game> storage = new EntityCSVStorage<>(filename)) {
 
-            // Let's init the session, this allows us to retrieve the array list in the
-            // handler
             final Session session = Session.builder().put(STORAGE_KEY, storage).build();
 
             // Start crawler
             try (Crawler crawler = createCrawler(createFetcher(), session).start()) {
                 LOGGER.info("starting crawler...");
 
-                Document doc = Jsoup.connect("https://store.steampowered.com/").get();
-                
-                // filter out game genres from the steam website
-                Elements tabs = doc.select("div.popup_menu_twocol > div.popup_menu > a.popup_menu_item");
-                System.out.println(tabs);
-                
-                for (Element tab : tabs) {
-                    String url = tab.attr("href");
-                    System.out.println(url);
-                    if (url.contains("tags")) {
-                        crawler.getScheduler().add(new VRequest(url), new ListingHandler());
-                    }
+                String startUrl = "https://store.steampowered.com/";
+
+                List<String> links = new ArrayList<>();
+
+                links = BaseCrawler.linkGetter(startUrl);
+                for (String link : links) {
+                    crawler.getScheduler().add(new VRequest(link), new ListingHandler());
                 }
+                
 
             } catch (Exception e) {
                 LOGGER.error("Could not run crawler: ", e);
