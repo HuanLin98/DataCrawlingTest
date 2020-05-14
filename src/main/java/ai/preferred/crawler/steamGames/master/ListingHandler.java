@@ -7,16 +7,14 @@ import ai.preferred.venom.Session;
 import ai.preferred.venom.Worker;
 import ai.preferred.venom.job.Scheduler;
 import ai.preferred.venom.request.Request;
-import ai.preferred.venom.request.VRequest;
 import ai.preferred.venom.response.VResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URIBuilder;
 import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.json.*;
+import org.jsoup.Jsoup;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.List;
 
 public class ListingHandler implements Handler{
@@ -26,9 +24,16 @@ public class ListingHandler implements Handler{
     public void handle (Request request, VResponse response, Scheduler scheduler, Session session, Worker worker) {
         LOGGER.info("processing: {}", request.getUrl());
 
-        final Document document = response.getJsoup();
-        // use the created parser to store the games into gameList
-        final List<Game> gameList = ListingParser.parseListing(document);
+        String jsonString = response.getHtml();
+        String url = request.getUrl();
+        String genre = url.substring(url.lastIndexOf('=') + 1);
+
+        JSONObject jsonObj = new JSONObject(jsonString);
+        
+        String prices = jsonObj.getString("results_html");
+        Document document = Jsoup.parse(prices);
+
+        final List<Game> gameList = ListingParser.parseListing(document, genre);
 
         // stop the method from writing into csv if there is no game found
         if (gameList.isEmpty()) {
@@ -50,29 +55,5 @@ public class ListingHandler implements Handler{
               }
             }
         });
-
-        // // Crawl another page if there's a next page
-        // final String url = request.getUrl();
-        // try {
-        //     final URIBuilder builder = new URIBuilder(url);
-        //     int currentPage = 1;
-        //     for (final NameValuePair param : builder.getQueryParams()) {
-        //         if ("page".equals(param.getName())) {
-        //         currentPage = Integer.parseInt(param.getValue());
-        //         }
-        //     }
-            
-        //     for (int i = 1; i < 3; i++ ) {
-        //         String additional = "#p=" + i + "&tab=NewReleases";
-        //         String newUrl = url + additional;
-        //         scheduler.add(new VRequest(newUrl));
-        //     }
-        //     builder.setParameter("page", String.valueOf(currentPage + 1));
-        //     final String nextPageUrl = builder.toString();
-        //     // Schedule the next page
-        //     scheduler.add(new VRequest(nextPageUrl), this);
-        // } catch (URISyntaxException | NumberFormatException e) {
-        // LOGGER.error("unable to parse url: ", e);
-        // }
     }
 }
