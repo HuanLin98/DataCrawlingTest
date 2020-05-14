@@ -57,7 +57,4 @@ public class BaseCrawler {
         LOGGER.info("You hvae crawled {} game genre links", links.size());
         return links;
     }
-
-
-
 }
