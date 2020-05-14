@@ -36,7 +36,7 @@ public class BaseHandler implements Handler {
             String url = tab.attr("href");
             System.out.println(url);
             if (url.contains("tags")) {
-                links.add(url);
+                links.add(tab.text());
             }
         }
     }
