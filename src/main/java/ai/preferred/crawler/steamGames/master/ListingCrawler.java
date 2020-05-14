@@ -12,17 +12,12 @@ import ai.preferred.venom.validator.StatusOkValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ai.preferred.crawler.steamGames.entity.Game;
-import ai.preferred.venom.job.Scheduler;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.Jsoup;
 import org.jsoup.select.Elements;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URIBuilder;
 import java.io.IOException;
-import java.net.URISyntaxException;
 
-import java.io.IOException;
 
 public class ListingCrawler {
     // Create session keys for CSV printer to print from handler
