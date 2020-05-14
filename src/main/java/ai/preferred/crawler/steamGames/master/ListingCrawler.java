@@ -15,9 +15,6 @@ import ai.preferred.crawler.steamGames.entity.Game;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.*;
-// import org.apache.http.client.utils.URIBuilder;
-// import org.jsoup.Jsoup;
-// import org.jsoup.nodes.Document;
 
 public class ListingCrawler {
     // Create session keys for CSV printer to print from handler
@@ -38,21 +35,22 @@ public class ListingCrawler {
             // Start crawler
             try (Crawler crawler = createCrawler(createFetcher(), session).start()) {
                 LOGGER.info("starting crawler...");
-
+                
                 String startUrl = "https://store.steampowered.com/";
 
                 List<String> links = new ArrayList<>();
 
                 links = BaseCrawler.linkGetter(startUrl);
                 for (String link : links) {
-                    crawler.getScheduler().add(new VRequest(link), new ListingHandler());
+                    for (int i = 0; i <= 30; i += 15) {
+                        link = link.replace(" ", "%20");
+                        String specialUrl = "https://store.steampowered.com/contenthub/querypaginated/tags/NewReleases/render/?query=&start=" + i + "&count=15&cc=SG&l=english&v=4&tag=" + link;
+                        crawler.getScheduler().add(new VRequest(specialUrl), new ListingHandler());
+                    }
                 }
-                
-
             } catch (Exception e) {
                 LOGGER.error("Could not run crawler: ", e);
             }
-
         } catch (IOException e) {
             LOGGER.error("unable to open file: {}, {}", filename, e);
         }
